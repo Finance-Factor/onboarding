@@ -1,0 +1,27 @@
+Host ff
+  HostName IP_VPS
+  User flo
+  IdentityFile /home/{USER}/.ssh/ssh_hostinger
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+
+Host root
+  HostName IP_VPS
+  User root
+  IdentityFile /home/{USER}/.ssh/ssh_hostinger
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+
+Host bitwarden
+  HostName IP_VPS
+  User bitwarden
+  IdentityFile /home/{USER}/.ssh/ssh_hostinger
+  IdentitiesOnly yes
+  AddKeysToAgent yes
+
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile /home/{USER}/.ssh/ssh_wsl_github
+  IdentitiesOnly yes
+  AddKeysToAgent yes
