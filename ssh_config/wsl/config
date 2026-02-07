@@ -1,19 +1,19 @@
 Host ff
-  HostName IP_VPS
-  User flo
+  HostName {DEFAULT_VPS_IP}
+  User {USER_VPS_NAME}
   IdentityFile /home/{USER}/.ssh/ssh_hostinger
   IdentitiesOnly yes
   AddKeysToAgent yes
 
 Host root
-  HostName IP_VPS
+  HostName {DEFAULT_VPS_IP}
   User root
   IdentityFile /home/{USER}/.ssh/ssh_hostinger
   IdentitiesOnly yes
   AddKeysToAgent yes
 
 Host bitwarden
-  HostName IP_VPS
+  HostName {DEFAULT_VPS_IP}
   User bitwarden
   IdentityFile /home/{USER}/.ssh/ssh_hostinger
   IdentitiesOnly yes
