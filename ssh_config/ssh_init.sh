@@ -2,8 +2,7 @@
 
 # List of keys to load (modify as needed)
 SSH_KEYS=(
-  "$HOME/.ssh/ssh_hostinger"
-  "$HOME/.ssh/ssh_wsl_github"
+  "$HOME/.ssh/{SSH_KEY_NAME}"
 )
 
 # Expiration time for each key (in seconds)
