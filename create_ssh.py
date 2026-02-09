@@ -219,6 +219,7 @@ def create_ssh_key():
     """
     Create SSH key pair using ssh-keygen command and set proper permissions.
     """
+    global SSH_KEY_FILENAME, SSH_KEY_PATH
 
     # Create .ssh directory if it doesn't exist and set proper permissions
     ssh_dir = os.path.expanduser("~/.ssh")
