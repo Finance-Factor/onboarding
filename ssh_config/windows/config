@@ -1,20 +1,20 @@
 Host {SSH_SHORTCUT_NAME}
   HostName {DEFAULT_VPS_IP}
   User {USER_VPS_NAME}
-  IdentityFile C:\Users\{WINDOWS_USERNAME}\.ssh\{WSL_SSH_KEY_NAME}
+  IdentityFile C:\Users\{WINDOWS_USERNAME}\.ssh\{SSH_KEY_FILENAME}
   IdentitiesOnly yes
   AddKeysToAgent yes
 
 Host root
   HostName {DEFAULT_VPS_IP}
   User root
-  IdentityFile C:\Users\{WINDOWS_USERNAME}\.ssh\{WSL_SSH_KEY_NAME}
+  IdentityFile C:\Users\{WINDOWS_USERNAME}\.ssh\{SSH_KEY_FILENAME}
   IdentitiesOnly yes
   AddKeysToAgent yes
 
 Host bitwarden
   HostName {DEFAULT_VPS_IP}
   User bitwarden
-  IdentityFile C:\Users\{WINDOWS_USERNAME}\.ssh\{WSL_SSH_KEY_NAME}
+  IdentityFile C:\Users\{WINDOWS_USERNAME}\.ssh\{SSH_KEY_FILENAME}
   IdentitiesOnly yes
   AddKeysToAgent yes

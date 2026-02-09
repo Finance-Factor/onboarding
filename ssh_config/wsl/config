@@ -1,27 +1,27 @@
 Host {SSH_SHORTCUT_NAME}
   HostName {DEFAULT_VPS_IP}
   User {USER_VPS_NAME}
-  IdentityFile /home/{LOCAL_USER}/.ssh/{WSL_SSH_KEY_NAME}
+  IdentityFile /home/{LOCAL_USER}/.ssh/{SSH_KEY_FILENAME}
   IdentitiesOnly yes
   AddKeysToAgent yes
 
 Host root
   HostName {DEFAULT_VPS_IP}
   User root
-  IdentityFile /home/{LOCAL_USER}/.ssh/{WSL_SSH_KEY_NAME}
+  IdentityFile /home/{LOCAL_USER}/.ssh/{SSH_KEY_FILENAME}
   IdentitiesOnly yes
   AddKeysToAgent yes
 
 Host bitwarden
   HostName {DEFAULT_VPS_IP}
   User bitwarden
-  IdentityFile /home/{LOCAL_USER}/.ssh/{WSL_SSH_KEY_NAME}
+  IdentityFile /home/{LOCAL_USER}/.ssh/{SSH_KEY_FILENAME}
   IdentitiesOnly yes
   AddKeysToAgent yes
 
 Host github.com
   HostName github.com
   User git
-  IdentityFile /home/{LOCAL_USER}/.ssh/{WSL_SSH_KEY_NAME}
+  IdentityFile /home/{LOCAL_USER}/.ssh/{SSH_KEY_FILENAME}
   IdentitiesOnly yes
   AddKeysToAgent yes
