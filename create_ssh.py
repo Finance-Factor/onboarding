@@ -9,21 +9,25 @@ COLOR_RED = "\033[91m"
 COLOR_BLINK = "\033[5m"
 COLOR_RESET = "\033[0m"
 
-DEFAULT_VPS_IP = "" # ✅
-SSH_SHORTCUT_NAME = "" # ✅
-WSL_SSH_KEY_NAME = "id_" # ✅
-USER_VPS_NAME = "" # ✅
-############################################
-WINDOWS_USERNAME = "" # ✅
-SSH_PATH="$HOME/.ssh/" # ✅⛔
-LOCAL_USER = "" # ✅⛔
+DEFAULT_VPS_IP = ""
+SSH_SHORTCUT_NAME = "" 
+WSL_SSH_KEY_NAME = "id_" 
+USER_VPS_NAME = "" 
+WINDOWS_USERNAME = ""
+SSH_PATH="$HOME/.ssh/" 
+LOCAL_USER = "" 
 
 def intro():
+    """
+    Display the introduction message for the SSH configurator.
+    """
     print(f"-----\n{COLOR_GREEN}{COLOR_BLINK}SSH CONFIGURATOR{COLOR_RESET}\n-----")
     print("\nThis configurator aims to facilitate the SSH onboarding from creating keys to easing SSH config, agent and usage.")
 
 def check_ssh_path():
-    """Check and confirm the SSH path."""
+    """
+    Check and confirm the SSH path.
+    """
     print(f"-----\n{COLOR_RED}{COLOR_BLINK}!!! IMPORTANT !!!{COLOR_RESET}\n-----")
     current_path = subprocess.run(f"echo {SSH_PATH}", shell=True, capture_output=True, text=True).stdout.strip()
     print(f"\nYour current SSH path is: {COLOR_GREEN}{current_path}{COLOR_RESET}")
@@ -34,6 +38,9 @@ def check_ssh_path():
         sys.exit(0)
 
 def check_root():
+    """
+    Check if the script is being run as root and warn the user.
+    """
     print(f"\n{COLOR_RED}WARNING: Running as root is not recommended for SSH configuration.{COLOR_RESET}")
     if os.getuid() == 0:
         print(f"{COLOR_RED}Error: This script cannot be run as root. Please run as a regular user.{COLOR_RESET}")
@@ -331,6 +338,9 @@ def config_wsl():
     os.chmod(ssh_config_path, 0o600)
     
 def resume_ssh_config():
+    """
+    Display summary and next steps after SSH configuration.
+    """
     print(f"\n{COLOR_GREEN}✓ SSH config successfully created at: {ssh_config_path}{COLOR_RESET}")
     print(f"\n{COLOR_GREEN}{COLOR_BLINK}=== CONFIGURATION SUMMARY ==={COLOR_RESET}")
     print(f"  VPS IP: {DEFAULT_VPS_IP}")
@@ -351,7 +361,7 @@ def resume_ssh_config():
 
 def configure_vscode():
     """
-    This helps set up previously generated keys to VS Code
+    This helps set up previously generated keys to VS Code Remote - SSH extension by creating a config file in the Windows .ssh directory via symbolic link to WSL .ssh directory.
     """
     global WINDOWS_USERNAME
 
