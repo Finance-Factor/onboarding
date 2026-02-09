@@ -14,6 +14,7 @@ SSH_SHORTCUT_NAME = "" # ✅
 WSL_SSH_KEY_NAME = "id_" # ✅
 USER_VPS_NAME = "" # ✅
 ############################################
+WINDOWS_USERNAME = "" # ✅
 SSH_PATH="$HOME/.ssh/" # ✅⛔
 LOCAL_USER = "" # ✅⛔
 
@@ -360,6 +361,8 @@ def configure_vscode():
     """
     This helps set up previously generated keys to VS Code
     """
+    global WINDOWS_USERNAME
+
     print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}VS CODE SSH CONFIGURATION{COLOR_RESET}\n-----")
     
     print(f"\n{COLOR_GREEN}Enter your Windows username:{COLOR_RESET}")
@@ -370,6 +373,8 @@ def configure_vscode():
     while not windows_user:
         print(f"{COLOR_RED}Windows username cannot be empty.{COLOR_RESET}")
         windows_user = input(": ").strip()
+    
+    WINDOWS_USERNAME = windows_user
     
     # Create symbolic link to Windows SSH directory
     windows_ssh_path = f"/mnt/c/Users/{windows_user}/.ssh"
@@ -386,7 +391,84 @@ def configure_vscode():
     else:
         print(f"{COLOR_RED}Error creating symbolic link: {result.stderr}{COLOR_RESET}")
         print(f"{COLOR_RED}You may need to create it manually with: ln -s '{windows_ssh_path}' {link_name}{COLOR_RESET}")
+
+    # Add config for windows
+    global DEFAULT_VPS_IP, WSL_SSH_KEY_NAME, USER_VPS_NAME, SSH_SHORTCUT_NAME
     
+    # Copy SSH keys from WSL to Windows
+    print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}COPYING SSH KEYS TO WINDOWS{COLOR_RESET}\n-----")
+    
+    wsl_ssh_dir = os.path.expanduser("~/.ssh")
+    wsl_private_key = os.path.join(wsl_ssh_dir, WSL_SSH_KEY_NAME)
+    wsl_public_key = os.path.join(wsl_ssh_dir, f"{WSL_SSH_KEY_NAME}.pub")
+    
+    # Check if keys exist in WSL
+    if not os.path.exists(wsl_private_key) or not os.path.exists(wsl_public_key):
+        print(f"{COLOR_RED}Error: SSH keys not found in WSL at {wsl_private_key}{COLOR_RESET}")
+        print(f"{COLOR_RED}Please run the WSL configuration first to generate SSH keys.{COLOR_RESET}")
+        sys.exit(1)
+    
+    # Copy keys to Windows via symlink
+    windows_private_key = os.path.join(link_name, WSL_SSH_KEY_NAME)
+    windows_public_key = os.path.join(link_name, f"{WSL_SSH_KEY_NAME}.pub")
+    
+    try:
+        # Copy private key
+        subprocess.run(["cp", wsl_private_key, windows_private_key], check=True)
+        os.chmod(windows_private_key, 0o600)
+        print(f"{COLOR_GREEN}✓ Private key copied to Windows{COLOR_RESET}")
+        
+        # Copy public key
+        subprocess.run(["cp", wsl_public_key, windows_public_key], check=True)
+        os.chmod(windows_public_key, 0o644)
+        print(f"{COLOR_GREEN}✓ Public key copied to Windows{COLOR_RESET}")
+    except subprocess.CalledProcessError as e:
+        print(f"{COLOR_RED}Error copying keys: {e}{COLOR_RESET}")
+        sys.exit(1)
+    
+    # Read Windows config template
+    print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}WINDOWS SSH CONFIG FILE{COLOR_RESET}\n-----")
+    
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    template_path = os.path.join(script_dir, "ssh_config", "windows", "config")
+    
+    try:
+        with open(template_path, 'r') as f:
+            config_content = f.read()
+    except FileNotFoundError:
+        print(f"{COLOR_RED}Error: Template config file not found at {template_path}{COLOR_RESET}")
+        sys.exit(1)
+    
+    # Replace placeholders
+    config_content = config_content.replace("{DEFAULT_VPS_IP}", DEFAULT_VPS_IP)
+    config_content = config_content.replace("{USER_VPS_NAME}", USER_VPS_NAME)
+    config_content = config_content.replace("{WINDOWS_USERNAME}", WINDOWS_USERNAME)
+    config_content = config_content.replace("{WSL_SSH_KEY_NAME}", WSL_SSH_KEY_NAME)
+    config_content = config_content.replace("{SSH_SHORTCUT_NAME}", SSH_SHORTCUT_NAME)
+    
+    # Write config to Windows SSH directory via symlink
+    windows_config_path = os.path.join(link_name, "config")
+    
+    # Create backup if config already exists
+    if os.path.exists(windows_config_path):
+        backup_path = f"{windows_config_path}.backup"
+        subprocess.run(["cp", windows_config_path, backup_path])
+        print(f"{COLOR_GREEN}✓ Backup created at: {backup_path}{COLOR_RESET}")
+    
+    # Write new config
+    with open(windows_config_path, 'w') as f:
+        f.write(config_content)
+    
+    # Set proper permissions
+    os.chmod(windows_config_path, 0o644)
+    
+    print(f"{COLOR_GREEN}✓ Windows SSH config successfully created{COLOR_RESET}")
+    print(f"\n{COLOR_GREEN}{COLOR_BLINK}=== WINDOWS SSH CONFIGURATION COMPLETE ==={COLOR_RESET}")
+    print(f"  SSH keys copied to: C:\\Users\\{WINDOWS_USERNAME}\\.ssh\\")
+    print(f"  Config file created: C:\\Users\\{WINDOWS_USERNAME}\\.ssh\\config")
+    print(f"\n{COLOR_GREEN}You can now use SSH from Windows with: ssh {SSH_SHORTCUT_NAME}{COLOR_RESET}\n")
+
+
 
 def main():
     intro()
