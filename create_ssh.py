@@ -143,7 +143,6 @@ def config_wsl():
     
     print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}SSH KEY GENERATION{COLOR_RESET}\n-----")
     
-    # !!!!!!!!!!!!!!! lAAAAAA
     # Check if key already exists
     print(f"{COLOR_RED}Your SSH key will need, idealy, to have a passphrase for better security.{COLOR_RESET}")
     if os.path.exists(ssh_key_path) or os.path.exists(ssh_key_pub_path):
