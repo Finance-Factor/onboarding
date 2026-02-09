@@ -400,15 +400,15 @@ def resume_ssh_config():
     print(
         f"\n{COLOR_GREEN}✓ SSH config successfully created at: {ssh_config_path}{COLOR_RESET}"
     )
-    print(f"\n{COLOR_GREEN}{COLOR_BLINK}=== CONFIGURATION SUMMARY ==={COLOR_RESET}")
+    print(f"\n{COLOR_GREEN}{COLOR_BLINK}======== CONFIGURATION SUMMARY ========{COLOR_RESET}")
     print(f"  VPS IP: {DEFAULT_VPS_IP}")
     print(f"  VPS User: {USER_VPS_NAME}")
     print(f"  SSH Key: {SSH_KEY_FILENAME}")
     print(f"  SSH Key Path: {SSH_KEY_PATH}")  # ! NOT GLOBAL
     print(f"  Local User: {LOCAL_USER}")
 
-    print(f"\n{COLOR_GREEN}{COLOR_BLINK}=== NEXT STEPS ==={COLOR_RESET}")
-    print(f"\n1. {COLOR_GREEN}Copy your public key to the VPS{COLOR_RESET}")
+    print(f"\n{COLOR_GREEN}{COLOR_BLINK}======== NEXT STEPS ========{COLOR_RESET}")
+    print(f"\n1. {COLOR_GREEN}Copy your public key to the VPS provider.{COLOR_RESET}")
 
     print(f"\n\n2. {COLOR_GREEN}Test your SSH connection:{COLOR_RESET}")
     if SSH_SHORTCUT_NAME:
@@ -463,8 +463,8 @@ def configure_vscode():
             f"{COLOR_RED}You may need to create it manually with: ln -s '{windows_ssh_path}' {link_name}{COLOR_RESET}"
         )
 
-    # Add config for windows
-    global DEFAULT_VPS_IP, SSH_KEY_FILENAME, USER_VPS_NAME, SSH_SHORTCUT_NAME
+    # ! CHECK IF THIS FUNCTION CAN ACCESS THE GLOBAL VARIABLES
+    # global DEFAULT_VPS_IP, SSH_KEY_FILENAME, USER_VPS_NAME, SSH_SHORTCUT_NAME
 
     # Copy SSH keys from WSL to Windows
     print(
