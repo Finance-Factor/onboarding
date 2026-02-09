@@ -343,18 +343,13 @@ def config_wsl():
     print(f"  Local User: {LOCAL_USER}")
     
     print(f"\n{COLOR_GREEN}{COLOR_BLINK}=== NEXT STEPS ==={COLOR_RESET}")
-    print(f"\n1. {COLOR_GREEN}Copy your public key to the VPS:{COLOR_RESET}")
-    print(f"   Run: ssh-copy-id -i {ssh_key_path}.pub {USER_VPS_NAME}@{DEFAULT_VPS_IP}")
-    print(f"   Or manually add the public key shown above to ~/.ssh/authorized_keys on your VPS")
-    print(f"\n2. {COLOR_GREEN}Test your SSH connection:{COLOR_RESET}")
+    print(f"\n1. {COLOR_GREEN}Copy your public key to the VPS{COLOR_RESET}")
+    
+    print(f"\n\n2. {COLOR_GREEN}Test your SSH connection:{COLOR_RESET}")
     if SSH_SHORTCUT_NAME:
         print(f"   Run: ssh {SSH_SHORTCUT_NAME}")
     else:
         print(f"   Run: ssh {USER_VPS_NAME}@{DEFAULT_VPS_IP}")
-    print(f"\n3. {COLOR_GREEN}If connection fails, check:{COLOR_RESET}")
-    print(f"   - SSH service is running on VPS")
-    print(f"   - Firewall allows SSH connections (port 22)")
-    print(f"   - Public key is correctly added to VPS authorized_keys")
     print(f"\n{COLOR_GREEN}✓ SSH configuration complete!{COLOR_RESET}\n")
 
 def configure_vscode():
@@ -466,8 +461,6 @@ def configure_vscode():
     print(f"\n{COLOR_GREEN}{COLOR_BLINK}=== WINDOWS SSH CONFIGURATION COMPLETE ==={COLOR_RESET}")
     print(f"  SSH keys copied to: C:\\Users\\{WINDOWS_USERNAME}\\.ssh\\")
     print(f"  Config file created: C:\\Users\\{WINDOWS_USERNAME}\\.ssh\\config")
-    print(f"\n{COLOR_GREEN}You can now use SSH from Windows with: ssh {SSH_SHORTCUT_NAME}{COLOR_RESET}\n")
-
 
 
 def main():
@@ -479,7 +472,7 @@ def main():
         choice = input("Choose your current environment target for ssh configuration\nType 1 for WSL\nType 2 for VPS\n: ").strip()
     
     if choice == "1": # WSL
-        # config_wsl()
+        config_wsl()
         configure_vscode()
     elif choice == "2": # VPS
         print("VPS configuration is not implemented yet. Stay tuned for the next release.")
