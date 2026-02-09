@@ -66,6 +66,8 @@ def config_wsl():
     # * GLOBAL
     print(f"\n{COLOR_GREEN} Enter a name for your SSH shortcut (e.g. myvps):{COLOR_RESET}")
     print(f"{COLOR_RED}WARNING: This name will be used as the SSH host alias in your config, so choose something memorable, short and easy to type.{COLOR_RESET}")
+    print(f"(Only lowercase letters allowed, no spaces or special characters)")
+    print(f"{COLOR_RED}The shortcut will allow you to connect to your VPS with: ssh {COLOR_GREEN}your_ssh_shortcut{COLOR_RESET}{COLOR_RED} instead of ssh user@{DEFAULT_VPS_IP}{COLOR_RESET}")
     SSH_SHORTCUT_NAME = input(": ").strip()
     while not SSH_SHORTCUT_NAME or not SSH_SHORTCUT_NAME.islower():
         print(f"{COLOR_RED}Shortcut name cannot be empty or other than pure lowercase.{COLOR_RESET}")
@@ -78,6 +80,7 @@ def config_wsl():
         print(f"\n{COLOR_GREEN}Enter your SSH key name:{COLOR_RESET}")
         print(f"{COLOR_RED}WARNING: This name needs, idealy, to be short and clearly identifiable.{COLOR_RESET}")
         print(f"(Only lowercase letters and underscores allowed)")
+        print(f"{COLOR_RED}The SSH key will be created in your ~/.ssh/ directory with the name: {COLOR_GREEN}id_yourkeyname{COLOR_RESET}{COLOR_RED} (e.g. id_myvps){COLOR_RESET}")
         ssh_name = input(": ").strip()
         
         # Strip id_ prefix if user includes it
@@ -145,7 +148,8 @@ def config_wsl():
     print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}SSH KEY GENERATION{COLOR_RESET}\n-----")
     
     # Check if key already exists
-    print(f"{COLOR_RED}Your SSH key will need, idealy, to have a passphrase for better security.{COLOR_RESET}")
+    print(f"{COLOR_RED}{COLOR_BLINK}Your SSH key will need, idealy, to have a passphrase for better security.{COLOR_RESET}")
+    print(f"{COLOR_GREEN}A SSH passphrase adds an extra layer of security to your SSH key. Even if someone gets access to your private key file, they won't be able to use it without the passphrase.{COLOR_RESET}")
     if os.path.exists(ssh_key_path) or os.path.exists(ssh_key_pub_path):
         print(f"\n{COLOR_RED}WARNING: SSH key already exists at {ssh_key_path}{COLOR_RESET}")
         overwrite = input(f"Do you want to overwrite it? (yes/no): ").strip().lower()
@@ -166,15 +170,10 @@ def config_wsl():
                 key_type = "rsa"
                 key_bits = "4096"
             
-            # Get optional comment/email
-            comment = input(f"\n{COLOR_GREEN}Enter email/comment for the key (optional, press ENTER to skip):{COLOR_RESET} ").strip()
-            
             # Build ssh-keygen command
             cmd = ["ssh-keygen", "-t", key_type, "-f", ssh_key_path]
             if key_bits:
                 cmd.extend(["-b", key_bits])
-            if comment:
-                cmd.extend(["-C", comment])
             
             # Run ssh-keygen
             result = subprocess.run(cmd)
@@ -200,14 +199,11 @@ def config_wsl():
             key_bits = "4096"
         
         # Get optional comment/email
-        comment = input(f"\n{COLOR_GREEN}Enter email/comment for the key (optional, press ENTER to skip):{COLOR_RESET} ").strip()
         
         # Build ssh-keygen command
         cmd = ["ssh-keygen", "-t", key_type, "-f", ssh_key_path]
         if key_bits:
             cmd.extend(["-b", key_bits])
-        if comment:
-            cmd.extend(["-C", comment])
         
         # Run ssh-keygen
         result = subprocess.run(cmd)
@@ -334,6 +330,7 @@ def config_wsl():
     # Set proper permissions
     os.chmod(ssh_config_path, 0o600)
     
+def resume_ssh_config():
     print(f"\n{COLOR_GREEN}✓ SSH config successfully created at: {ssh_config_path}{COLOR_RESET}")
     print(f"\n{COLOR_GREEN}{COLOR_BLINK}=== CONFIGURATION SUMMARY ==={COLOR_RESET}")
     print(f"  VPS IP: {DEFAULT_VPS_IP}")
@@ -474,6 +471,7 @@ def main():
     if choice == "1": # WSL
         config_wsl()
         configure_vscode()
+        resume_ssh_config()
     elif choice == "2": # VPS
         print("VPS configuration is not implemented yet. Stay tuned for the next release.")
     else:
