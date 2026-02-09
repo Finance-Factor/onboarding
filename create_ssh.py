@@ -356,6 +356,37 @@ def config_wsl():
     print(f"   - Public key is correctly added to VPS authorized_keys")
     print(f"\n{COLOR_GREEN}✓ SSH configuration complete!{COLOR_RESET}\n")
 
+def configure_vscode():
+    """
+    This helps set up previously generated keys to VS Code
+    """
+    print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}VS CODE SSH CONFIGURATION{COLOR_RESET}\n-----")
+    
+    print(f"\n{COLOR_GREEN}Enter your Windows username:{COLOR_RESET}")
+    print(f"(This is the username you use to log into Windows)")
+    print(f"{COLOR_RED} If you are unsure, open a PowerShell terminal and run $env:USERNAME{COLOR_RESET}")
+
+    windows_user = input(": ").strip()
+    while not windows_user:
+        print(f"{COLOR_RED}Windows username cannot be empty.{COLOR_RESET}")
+        windows_user = input(": ").strip()
+    
+    # Create symbolic link to Windows SSH directory
+    windows_ssh_path = f"/mnt/c/Users/{windows_user}/.ssh"
+    home_dir = os.path.expanduser("~")
+    link_name = os.path.join(home_dir, "ssh_windows")
+    
+    print(f"\n{COLOR_GREEN}Creating symbolic link to Windows SSH directory in home...{COLOR_RESET}")
+    cmd = ["ln", "-s", windows_ssh_path, link_name]
+    
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    
+    if result.returncode == 0:
+        print(f"{COLOR_GREEN}✓ Symbolic link created: {link_name} -> {windows_ssh_path}{COLOR_RESET}")
+    else:
+        print(f"{COLOR_RED}Error creating symbolic link: {result.stderr}{COLOR_RESET}")
+        print(f"{COLOR_RED}You may need to create it manually with: ln -s '{windows_ssh_path}' {link_name}{COLOR_RESET}")
+    
 
 def main():
     intro()
@@ -366,7 +397,8 @@ def main():
         choice = input("Choose your current environment target for ssh configuration\nType 1 for WSL\nType 2 for VPS\n: ").strip()
     
     if choice == "1": # WSL
-        config_wsl()
+        # config_wsl()
+        configure_vscode()
     elif choice == "2": # VPS
         print("VPS configuration is not implemented yet. Stay tuned for the next release.")
     else:
