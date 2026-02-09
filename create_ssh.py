@@ -226,80 +226,113 @@ def config_wsl():
     if os.path.exists(ssh_key_pub_path):
         os.chmod(ssh_key_pub_path, 0o644)
     
-    # Add key to ssh-agent
-    print(f"\n{COLOR_GREEN}Adding SSH key to ssh-agent...{COLOR_RESET}")
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!! DEPRECATED SSH_INIT SCRIPT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     
-    # Start ssh-agent if not running
-    subprocess.run(["eval $(ssh-agent -s)"], shell=True, capture_output=True)
+    # # Add key to ssh-agent
+    # print(f"\n{COLOR_GREEN}Adding SSH key to ssh-agent...{COLOR_RESET}")
     
-    # Add key to agent
-    add_result = subprocess.run(["ssh-add", ssh_key_path], capture_output=True, text=True)
-    if add_result.returncode == 0:
-        print(f"{COLOR_GREEN}✓ SSH key added to ssh-agent{COLOR_RESET}")
-    else:
-        print(f"{COLOR_RED}Warning: Could not add key to ssh-agent. You may need to do this manually.{COLOR_RESET}")
+    # # Start ssh-agent if not running
+    # subprocess.run(["eval $(ssh-agent -s)"], shell=True, capture_output=True)
     
-    # Display public key
-    if os.path.exists(ssh_key_pub_path):
-        with open(ssh_key_pub_path, 'r') as f:
-            pub_key = f.read().strip()
-        print(f"\n{COLOR_GREEN}Your public key (copy this to your VPS):{COLOR_RESET}")
-        print(f"{COLOR_GREEN}{pub_key}{COLOR_RESET}")
+    # # Add key to agent
+    # add_result = subprocess.run(["ssh-add", ssh_key_path], capture_output=True, text=True)
+    # if add_result.returncode == 0:
+    #     print(f"{COLOR_GREEN}✓ SSH key added to ssh-agent{COLOR_RESET}")
+    # else:
+    #     print(f"{COLOR_RED}Warning: Could not add key to ssh-agent. You may need to do this manually.{COLOR_RESET}")
+    
+    # # Display public key
+    # if os.path.exists(ssh_key_pub_path):
+    #     with open(ssh_key_pub_path, 'r') as f:
+    #         pub_key = f.read().strip()
+    #     print(f"\n{COLOR_GREEN}Your public key (copy this to your VPS):{COLOR_RESET}")
+    #     print(f"{COLOR_GREEN}{pub_key}{COLOR_RESET}")
 
-    # Configure ssh_init.sh with the new key
-    print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}SSH AGENT CONFIGURATION{COLOR_RESET}\n-----")
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    ssh_init_template = os.path.join(script_dir, "ssh_config", "ssh_init.sh")
-    ssh_init_dest = os.path.join(ssh_dir, "ssh_init.sh")
+    # # Configure ssh_init.sh with the new key
+    # print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}SSH AGENT CONFIGURATION{COLOR_RESET}\n-----")
+    # script_dir = os.path.dirname(os.path.abspath(__file__))
+    # ssh_init_template = os.path.join(script_dir, "ssh_config", "ssh_init.sh")
+    # ssh_init_dest = os.path.join(ssh_dir, "ssh_init.sh")
     
-    try:
-        with open(ssh_init_template, 'r') as f:
-            ssh_init_content = f.read()
-    except FileNotFoundError:
-        print(f"{COLOR_RED}Warning: ssh_init.sh template not found at {ssh_init_template}{COLOR_RESET}")
-        ssh_init_content = None
+    # try:
+    #     with open(ssh_init_template, 'r') as f:
+    #         ssh_init_content = f.read()
+    # except FileNotFoundError:
+    #     print(f"{COLOR_RED}Warning: ssh_init.sh template not found at {ssh_init_template}{COLOR_RESET}")
+    #     ssh_init_content = None
     
-    if ssh_init_content:
-        # Replace placeholder with actual key name
-        ssh_init_content = ssh_init_content.replace("{SSH_KEY_NAME}", WSL_SSH_KEY_NAME)
+    # if ssh_init_content:
+    #     # Replace placeholder with actual key name
+    #     ssh_init_content = ssh_init_content.replace("{SSH_KEY_NAME}", WSL_SSH_KEY_NAME)
         
-        # Write ssh_init.sh to ~/.ssh/
-        with open(ssh_init_dest, 'w') as f:
-            f.write(ssh_init_content)
-        os.chmod(ssh_init_dest, 0o700)
-        print(f"{COLOR_GREEN}✓ SSH agent script created at: {ssh_init_dest}{COLOR_RESET}")
+    #     # Write ssh_init.sh to ~/.ssh/
+    #     with open(ssh_init_dest, 'w') as f:
+    #         f.write(ssh_init_content)
+    #     os.chmod(ssh_init_dest, 0o700)
+    #     print(f"{COLOR_GREEN}✓ SSH agent script created at: {ssh_init_dest}{COLOR_RESET}")
         
-        # Add to shell rc file
-        home_dir = os.path.expanduser("~")
-        zshrc_path = os.path.join(home_dir, ".zshrc")
-        bashrc_path = os.path.join(home_dir, ".bashrc")
+    #     # Add to shell rc file
+    #     home_dir = os.path.expanduser("~")
+    #     zshrc_path = os.path.join(home_dir, ".zshrc")
+    #     bashrc_path = os.path.join(home_dir, ".bashrc")
         
-        source_line = f"\n# SSH Agent persistent configuration\nif [ -f ~/.ssh/ssh_init.sh ]; then\n    source ~/.ssh/ssh_init.sh\nfi\n"
+    #     source_line = f"\n# SSH Agent persistent configuration\nif [ -f ~/.ssh/ssh_init.sh ]; then\n    source ~/.ssh/ssh_init.sh\nfi\n"
         
-        # Determine which shell rc file to use
-        rc_file = None
-        if os.path.exists(zshrc_path):
-            rc_file = zshrc_path
-            rc_name = ".zshrc"
-        elif os.path.exists(bashrc_path):
-            rc_file = bashrc_path
-            rc_name = ".bashrc"
+    #     # Determine which shell rc file to use
+    #     rc_file = None
+    #     if os.path.exists(zshrc_path):
+    #         rc_file = zshrc_path
+    #         rc_name = ".zshrc"
+    #     elif os.path.exists(bashrc_path):
+    #         rc_file = bashrc_path
+    #         rc_name = ".bashrc"
         
-        if rc_file:
-            # Check if already added
-            with open(rc_file, 'r') as f:
-                rc_content = f.read()
+    #     if rc_file:
+    #         # Check if already added
+    #         with open(rc_file, 'r') as f:
+    #             rc_content = f.read()
             
-            if "ssh_init.sh" not in rc_content:
-                with open(rc_file, 'a') as f:
-                    f.write(source_line)
-                print(f"{COLOR_GREEN}✓ SSH agent script added to {rc_name}{COLOR_RESET}")
-                print(f"{COLOR_RED}Note: Run 'source ~/{rc_name}' or restart your terminal to activate{COLOR_RESET}")
-            else:
-                print(f"{COLOR_GREEN}✓ SSH agent script already configured in {rc_name}{COLOR_RESET}")
+    #         if "ssh_init.sh" not in rc_content:
+    #             with open(rc_file, 'a') as f:
+    #                 f.write(source_line)
+    #             print(f"{COLOR_GREEN}✓ SSH agent script added to {rc_name}{COLOR_RESET}")
+    #             print(f"{COLOR_RED}Note: Run 'source ~/{rc_name}' or restart your terminal to activate{COLOR_RESET}")
+    #         else:
+    #             print(f"{COLOR_GREEN}✓ SSH agent script already configured in {rc_name}{COLOR_RESET}")
+    #     else:
+    #         print(f"{COLOR_RED}Warning: Neither .zshrc nor .bashrc found. Add this manually to your shell rc file:{COLOR_RESET}")
+    #         print(f"{source_line}")
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+    # Configure SSH agent in shell rc files
+    print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}SSH AGENT CONFIGURATION{COLOR_RESET}\n-----")
+    
+    home_dir = os.path.expanduser("~")
+    ssh_agent_lines = "\n# Start agent ssh\nssh-add -l >/dev/null 2>&1 || eval \"$(ssh-agent -s)\" >/dev/null\nexport SSH_ASKPASS_REQUIRE=never\n"
+    
+    for rc_file_name in [".bashrc", ".zshrc"]:
+        rc_file_path = os.path.join(home_dir, rc_file_name)
+        
+        # Create file if it doesn't exist
+        if not os.path.exists(rc_file_path):
+            print(f"{COLOR_GREEN}Creating {rc_file_name}...{COLOR_RESET}")
+            open(rc_file_path, 'w').close()
+            os.chmod(rc_file_path, 0o644)
+        
+        # Read current content
+        with open(rc_file_path, 'r') as f:
+            rc_content = f.read()
+        
+        # Check if SSH agent config already exists
+        if "Start agent ssh" not in rc_content and "ssh-add -l" not in rc_content:
+            with open(rc_file_path, 'a') as f:
+                f.write(ssh_agent_lines)
+            print(f"{COLOR_GREEN}✓ SSH agent configuration added to {rc_file_name}{COLOR_RESET}")
         else:
-            print(f"{COLOR_RED}Warning: Neither .zshrc nor .bashrc found. Add this manually to your shell rc file:{COLOR_RESET}")
-            print(f"{source_line}")
+            print(f"{COLOR_GREEN}✓ SSH agent configuration already exists in {rc_file_name}{COLOR_RESET}")
+    
+    print(f"{COLOR_RED}Note: Run 'source ~/.bashrc' or 'source ~/.zshrc' or restart your terminal to activate{COLOR_RESET}")
     
     # Read config template
     script_dir = os.path.dirname(os.path.abspath(__file__))
