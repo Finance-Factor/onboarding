@@ -18,6 +18,8 @@ WINDOWS_USERNAME = ""
 SSH_PATH = "$HOME/.ssh/"
 LOCAL_USER = ""
 KEY_TYPE = "ed25519"
+SSH_DIR = ""
+SSH_CONFIG_PATH = ""
 
 
 def intro():
@@ -219,13 +221,13 @@ def create_ssh_key():
     """
     Create SSH key pair using ssh-keygen command and set proper permissions.
     """
-    global SSH_KEY_FILENAME, SSH_KEY_PATH
+    global SSH_KEY_FILENAME, SSH_KEY_PATH, SSH_DIR
 
     # Create .ssh directory if it doesn't exist and set proper permissions
-    ssh_dir = os.path.expanduser("~/.ssh")
-    os.makedirs(ssh_dir, mode=0o700, exist_ok=True)
+    SSH_DIR = os.path.expanduser("~/.ssh")
+    os.makedirs(SSH_DIR, mode=0o700, exist_ok=True)
 
-    SSH_KEY_PATH = os.path.join(ssh_dir, SSH_KEY_FILENAME)
+    SSH_KEY_PATH = os.path.join(SSH_DIR, SSH_KEY_FILENAME)
     ssh_key_pub_path = f"{SSH_KEY_PATH}.pub"
 
     print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}SSH KEY GENERATION{COLOR_RESET}\n-----")
@@ -321,6 +323,7 @@ def configure_ssh_config():
     """
     Configure SSH config file by creating a new entry for the VPS connection.
     """
+    global SSH_CONFIG_PATH
     # Read config template
     script_dir = os.path.dirname(os.path.abspath(__file__))
     template_path = os.path.join(script_dir, "ssh_config", "wsl", "config")
@@ -341,15 +344,15 @@ def configure_ssh_config():
     config_content = config_content.replace("{SSH_KEY_FILENAME}", SSH_KEY_FILENAME)
     config_content = config_content.replace("{SSH_SHORTCUT_NAME}", SSH_SHORTCUT_NAME)
 
-    # SSH config path (ssh_dir already created earlier)
-    ssh_config_path = os.path.join(ssh_dir, "config")
+    # SSH config path (SSH_DIR already created earlier)
+    SSH_CONFIG_PATH = os.path.join(SSH_DIR, "config")
 
     print(f"\n-----\n{COLOR_GREEN}{COLOR_BLINK}SSH CONFIG FILE{COLOR_RESET}\n-----")
 
     # Create backup if config file already exists
-    if os.path.exists(ssh_config_path):
-        backup_path = f"{ssh_config_path}.backup"
-        subprocess.run(["cp", ssh_config_path, backup_path])
+    if os.path.exists(SSH_CONFIG_PATH):
+        backup_path = f"{SSH_CONFIG_PATH}.backup"
+        subprocess.run(["cp", SSH_CONFIG_PATH, backup_path])
         print(
             f"{COLOR_RED}Existing SSH config found. Backup created at: {backup_path}{COLOR_RESET}"
         )
@@ -358,11 +361,11 @@ def configure_ssh_config():
         )
 
     # Write new config
-    with open(ssh_config_path, "w") as f:
+    with open(SSH_CONFIG_PATH, "w") as f:
         f.write(config_content)
 
     # Set proper permissions
-    os.chmod(ssh_config_path, 0o600)
+    os.chmod(SSH_CONFIG_PATH, 0o600)
 
 
 def config_wsl():
@@ -399,7 +402,7 @@ def resume_ssh_config():
     )
 
     print(
-        f"\n{COLOR_GREEN}✓ SSH config successfully created at: {ssh_config_path}{COLOR_RESET}"
+        f"\n{COLOR_GREEN}✓ SSH config successfully created at: {SSH_CONFIG_PATH}{COLOR_RESET}"
     )
     print(f"\n{COLOR_GREEN}{COLOR_BLINK}======== CONFIGURATION SUMMARY ========{COLOR_RESET}")
     print(f"  VPS IP: {DEFAULT_VPS_IP}")
