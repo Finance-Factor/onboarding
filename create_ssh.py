@@ -319,14 +319,14 @@ def configure_ssh_agent():
             )
 
 
-def configure_ssh_config():
+def configure_ssh_config(target: str):
     """
     Configure SSH config file by creating a new entry for the VPS connection.
     """
     global SSH_CONFIG_PATH
     # Read config template
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    template_path = os.path.join(script_dir, "ssh_config", "wsl", "config")
+    template_path = os.path.join(script_dir, "ssh_config", target, "config")
 
     try:
         with open(template_path, "r") as f:
@@ -337,12 +337,15 @@ def configure_ssh_config():
         )
         sys.exit(1)
 
-    # Replace placeholders
-    config_content = config_content.replace("{DEFAULT_VPS_IP}", DEFAULT_VPS_IP)
-    config_content = config_content.replace("{USER_VPS_NAME}", USER_VPS_NAME)
-    config_content = config_content.replace("{LOCAL_USER}", LOCAL_USER)
+    # Replace placeholders only for WSL case
+    if target == "wsl":
+        config_content = config_content.replace("{DEFAULT_VPS_IP}", DEFAULT_VPS_IP)
+        config_content = config_content.replace("{USER_VPS_NAME}", USER_VPS_NAME)
+        config_content = config_content.replace("{SSH_SHORTCUT_NAME}", SSH_SHORTCUT_NAME)
+    
+    # Replace placeholders for both VPS and WSL
     config_content = config_content.replace("{SSH_KEY_FILENAME}", SSH_KEY_FILENAME)
-    config_content = config_content.replace("{SSH_SHORTCUT_NAME}", SSH_SHORTCUT_NAME)
+    config_content = config_content.replace("{LOCAL_USER}", LOCAL_USER)
 
     # SSH config path (SSH_DIR already created earlier)
     SSH_CONFIG_PATH = os.path.join(SSH_DIR, "config")
@@ -366,30 +369,6 @@ def configure_ssh_config():
 
     # Set proper permissions
     os.chmod(SSH_CONFIG_PATH, 0o600)
-
-
-def config_wsl():
-    """
-    Config script for WSL
-    """
-
-    print(f"-----\n{COLOR_GREEN}{COLOR_BLINK}SSH CONFIG FOR WSL{COLOR_RESET}\n-----")
-
-    get_default_vps_ip()
-
-    get_ssh_shortcut_name()
-
-    get_ssh_key_filename()
-
-    get_user_vps_name()
-
-    get_local_user()
-
-    create_ssh_key()
-
-    configure_ssh_agent()
-
-    configure_ssh_config()
 
 
 def resume_ssh_config():
@@ -554,6 +533,40 @@ def configure_vscode():
     print(f"  SSH keys copied to: C:\\Users\\{WINDOWS_USERNAME}\\.ssh\\")
     print(f"  Config file created: C:\\Users\\{WINDOWS_USERNAME}\\.ssh\\config")
 
+def config_wsl():
+    """
+    Config script for WSL
+    """
+
+    # Defining target name for configure_ssh_config
+    target = "wsl"
+
+    print(f"-----\n{COLOR_GREEN}{COLOR_BLINK}SSH CONFIG FOR WSL{COLOR_RESET}\n-----")
+
+    get_default_vps_ip()
+    get_ssh_shortcut_name()
+    get_ssh_key_filename()
+    get_user_vps_name()
+    get_local_user()
+    create_ssh_key()
+    configure_ssh_agent()
+    configure_ssh_config(target)
+
+def config_vps():
+    """
+    Config script for VPS (only get the IP and create a simple config file with it, as we can't generate keys or configure agent on the VPS for the user)
+    """
+
+    print(f"-----\n{COLOR_GREEN}{COLOR_BLINK}SSH CONFIG FOR VPS{COLOR_RESET}\n-----")
+
+    # Defining target name for configure_ssh_config
+    target = "vps"
+
+    get_ssh_key_filename()
+    get_local_user()
+    create_ssh_key()
+    configure_ssh_agent()
+    configure_ssh_config(target)
 
 def main():
     intro()
@@ -569,10 +582,9 @@ def main():
         config_wsl()
         configure_vscode()
         resume_ssh_config()
+
     elif choice == "2":  # VPS
-        print(
-            "VPS configuration is not implemented yet. Stay tuned for the next release."
-        )
+        config_vps()
     else:
         print("Not Recognized choice [1 or 2]. Relaunch the script.")
         sys.exit(1)
