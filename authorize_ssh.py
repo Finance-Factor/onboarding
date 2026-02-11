@@ -21,7 +21,7 @@ def check_is_root():
     print(
         f"\n{COLOR_RED}WARNING: This script must run as root on root user.{COLOR_RESET}"
     )
-    if os.getuid() is not 0:
+    if os.getuid() != 0:
         print(
             f"{COLOR_RED}Error: This script MUST be run as root.{COLOR_RESET}"
         )
