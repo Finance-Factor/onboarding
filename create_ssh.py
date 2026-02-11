@@ -371,7 +371,7 @@ def configure_ssh_config(target: str):
     os.chmod(SSH_CONFIG_PATH, 0o600)
 
 
-def resume_ssh_config():
+def resume_ssh_config(target: str):
     """
     Display summary and next steps after SSH configuration.
     """
@@ -384,20 +384,19 @@ def resume_ssh_config():
         f"\n{COLOR_GREEN}✓ SSH config successfully created at: {SSH_CONFIG_PATH}{COLOR_RESET}"
     )
     print(f"\n{COLOR_GREEN}{COLOR_BLINK}======== CONFIGURATION SUMMARY ========{COLOR_RESET}")
-    print(f"  VPS IP: {DEFAULT_VPS_IP}")
-    print(f"  VPS User: {USER_VPS_NAME}")
+    if target == "wsl":
+        print(f"  VPS IP: {DEFAULT_VPS_IP}")
+        print(f"  VPS User: {USER_VPS_NAME}")
     print(f"  SSH Key: {SSH_KEY_FILENAME}")
-    print(f"  SSH Key Path: {SSH_KEY_PATH}")  # ! NOT GLOBAL
+    print(f"  SSH Key Path: {SSH_KEY_PATH}")
     print(f"  Local User: {LOCAL_USER}")
 
     print(f"\n{COLOR_GREEN}{COLOR_BLINK}======== NEXT STEPS ========{COLOR_RESET}")
-    print(f"\n1. {COLOR_GREEN}Copy your public key to the VPS provider.{COLOR_RESET}")
+    
+    if target == "wsl":
+        print(f"\n. {COLOR_GREEN}Copy your public key to the VPS provider.{COLOR_RESET}")
 
-    print(f"\n\n2. {COLOR_GREEN}Test your SSH connection:{COLOR_RESET}")
-    if SSH_SHORTCUT_NAME:
-        print(f"   Run: ssh {SSH_SHORTCUT_NAME}")
-    else:
-        print(f"   Run: ssh {USER_VPS_NAME}@{DEFAULT_VPS_IP}")
+    print(f"\n\n. {COLOR_GREEN}Refer to the documentations for the next steps.{COLOR_RESET}")
     print(f"\n{COLOR_GREEN}✓ SSH configuration complete!{COLOR_RESET}\n")
 
 
@@ -551,6 +550,8 @@ def config_wsl():
     create_ssh_key()
     configure_ssh_agent()
     configure_ssh_config(target)
+    configure_vscode()
+    resume_ssh_config(target)
 
 def config_vps():
     """
@@ -567,6 +568,7 @@ def config_vps():
     create_ssh_key()
     configure_ssh_agent()
     configure_ssh_config(target)
+    resume_ssh_config(target)
 
 def main():
     intro()
@@ -575,14 +577,11 @@ def main():
     choice = ""
     while choice not in ["1", "2"]:
         choice = input(
-            "Choose your current environment target for ssh configuration\nType 1 for WSL\nType 2 for VPS\n: "
+            "Choose your current environment target for ssh configuration\nType 1 for WSL\nType 2 for Hostinger VPS\n: "
         ).strip()
 
     if choice == "1":  # WSL
         config_wsl()
-        configure_vscode()
-        resume_ssh_config()
-
     elif choice == "2":  # VPS
         config_vps()
     else:
