@@ -43,12 +43,25 @@ def get_user_vps_name():
         print(f"{COLOR_RED}Username cannot be empty.{COLOR_RESET}")
         USER_VPS_NAME = input(": ").strip()
 
+def get_public_ssh_key():
+    """
+    Prompt the user to enter their WSL public SSH key and validate it.
+    """
+    global WSL_PUBLIC_KEY
+
+    print(f"\n{COLOR_RED}Enter your WSL public SSH key{COLOR_RESET}")
+    
+    WSL_PUBLIC_KEY = input(": ").strip()
+    # Basic validation for SSH public key format
+    if not WSL_PUBLIC_KEY.startswith("ssh-"):
+        print(f"{COLOR_RED}Error: Invalid SSH public key format.{COLOR_RESET}")
+        sys.exit(1)
+    
+
 def create_authorized_key():
     """
     Create the file `authorized_keys`
     """
-
-    global WSL_PUBLIC_KEY
 
     # Create .ssh directory if it doesn't exist and set proper permissions
     SSH_DIR = os.path.expanduser(f"/home/{USER_VPS_NAME}/.ssh")
@@ -94,6 +107,7 @@ def main():
     """
     check_is_root()
     get_user_vps_name()
+    get_public_ssh_key()
     create_authorized_key()
 
 if __name__ == "__main__":
