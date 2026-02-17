@@ -21,9 +21,9 @@ def add_umask_to_shell_configs():
         if "umask 002" not in content:
             with open(config_path, "a") as f:
                 f.write(umask_line)
-            print(f"Added 'umask 0002' to {config_path}")
+            print(f"Added 'umask 002' to {config_path}")
         else:
-            print(f"'umask 0002' already exists in {config_path}")
+            print(f"'umask 002' already exists in {config_path}")
 
 if __name__ == "__main__":
     add_umask_to_shell_configs()
