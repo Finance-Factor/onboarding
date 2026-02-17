@@ -3,6 +3,13 @@
 # This script will fail if any command fails, so that we don't end up with a half-updated platform directory.
 set -e
 
+echo "⚠️  WARNING: This script must NOT be executed on the VPS, only on your WSL! ⚠️"
+read -p "Type 'yes' to continue: " confirm
+if [ "$confirm" != "yes" ]; then
+  echo "Aborted."
+  exit 1
+fi
+
 # Check if rsync is installed, otherwise install it
 if ! command -v rsync &> /dev/null; then
   echo "rsync could not be found, installing it..."
