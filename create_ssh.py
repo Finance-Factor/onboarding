@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 import re
+from create_umask import add_umask_to_shell_configs
 
 # ANSI color codes
 COLOR_GREEN = "\033[92m"
@@ -551,6 +552,7 @@ def config_wsl():
     configure_ssh_agent()
     configure_ssh_config(target)
     configure_vscode()
+    add_umask_to_shell_configs() # from create_umask.py
     resume_ssh_config(target)
 
 def config_vps():
@@ -568,6 +570,7 @@ def config_vps():
     create_ssh_key()
     configure_ssh_agent()
     configure_ssh_config(target)
+    add_umask_to_shell_configs() # from create_umask.py
     resume_ssh_config(target)
 
 def main():
