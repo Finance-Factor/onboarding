@@ -4,7 +4,7 @@ from pathlib import Path
 def add_umask_to_shell_configs():
     """Add 'umask 0002' to .bashrc and .zshrc"""
     home = Path.home()
-    umask_line = "\n# Make new files group-writable by default (files 664, dirs 775 instead of 644/755)\numask 0002\n"
+    umask_line = "\n# Make new files group-writable by default (files 664, dirs 775 instead of 644/755)\numask 002\n"
     
     for config_file in [".bashrc", ".zshrc"]:
         config_path = home / config_file
@@ -18,7 +18,7 @@ def add_umask_to_shell_configs():
             content = f.read()
         
         # Add umask line if not already present
-        if "umask 0002" not in content:
+        if "umask 002" not in content:
             with open(config_path, "a") as f:
                 f.write(umask_line)
             print(f"Added 'umask 0002' to {config_path}")
