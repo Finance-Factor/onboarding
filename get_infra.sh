@@ -34,7 +34,7 @@ sudo rsync -avz --delete \
     --exclude ".next" \
     --exclude ".venv" \
     --exclude "__pycache__" \
-    --exclude "/backup-azure" \
+    --exclude "backup-azure" \
     --exclude "services/appsmith" \
     --exclude "services/docusaurus_service" \
     --exclude "services/n8n_scheduler_service" \
