@@ -27,8 +27,18 @@ SSH_ALIAS="$ssh_alias"
 SSH_CONFIG_FILE="$HOME/.ssh/config"
 
 sudo rsync -avz --delete \
-    --exclude "secrets/staging" --exclude "secrets/prod" \
-    --exclude "node_modules" --exclude ".next" --exclude ".venv" --exclude "__pycache__" --exclude "services/appsmith" --exclude "backup-azure" \
+    --exclude "secrets/staging" \
+    --exclude "secrets/prod" \
+    --exclude "node_modules" \
+    --exclude ".deprecated" \
+    --exclude ".next" \
+    --exclude ".venv" \
+    --exclude "__pycache__" \
+    --exclude "/backup-azure" \
+    --exclude "services/appsmith" \
+    --exclude "services/docusaurus_service" \
+    --exclude "services/n8n_scheduler_service" \
+    --exclude "services/n8n_service" \
     -e "ssh -F $SSH_CONFIG_FILE" \
     "$SSH_ALIAS":/srv/shared_root/platform ~/
 
